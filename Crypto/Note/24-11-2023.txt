@@ -1,0 +1,27 @@
+Decimal to Bytes:
+    1. from Crypto.Util.number import *
+    2. flag = long_to_bytes(flag)
+
+Bytes to Decimal:
+    1. from Crypto.Util.number import *
+    2. flag = bytes_to_long(flag)
+
+Example:
+    <Message> HELLO
+    <ASCII> [72, 69, 76, 76, 79]
+    <Hex> [0x48, 0x45, 0x4c, 0x4c, 0x4f]
+    <Base-16> 0x48454c4c4f
+    <Base-10> 310400273487
+
+Xor function:
+    1. from pwn import *
+    2. xor(a1, a2, ...)
+Xor Properties:
+    1. A^B = B^A
+    2. A^(B^C) = (A^B)^C
+    3. A^0 = A
+    4. A^A = 0
+
+Trick to find out what the cipher key can be (Applied only for CTF:Crypto Challenges):
+    1. From pwn import */ From pwn import xor
+    2. Key = xor(flag(#bytes), b'crypto{')

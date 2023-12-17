@@ -1,0 +1,10 @@
+Websites for learning and solving Crypto Challenges in CTF:
+    I. For learning:
+        - Cryptohack
+        - CTFlearn
+        - CryptoLearn
+    II. For solving:
+        - CyberChef
+        - Dcode
+        - CryptoCorner
+        - PicoCTF

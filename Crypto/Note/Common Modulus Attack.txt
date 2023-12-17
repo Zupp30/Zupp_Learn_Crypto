@@ -1,0 +1,35 @@
+- This is a type of cryptographic attack that takes advantage of the properties of RSA encryption when the same modulus is used for multiple encryptions
+- In a common modulus attack, an attacker intercepts multiple ciphertexts that have been encrypted using the same modulus (n) but with different pubkey.
+- Then the attacker can use mathematical techniques to recover the plaintext message, even if the private exponent (d) is not known
+
+- One way to perform a common modulus attack is to use CRT to combine the equations of multiple ciphertexts, allowing the attacker to solve for the plaintext.
+- Another way is to use the Euclidean algorithm to calculate the GCD of the multiple pubkeys and the modulus (n) to obtain the private exponent (d) and then use it to decrypt the ciphertexts
+
+GIVEN: 
+c1, c2 = 
+e1, e2 = 
+n = 
+
+[
+    c1 = pow(m, e1, n) 
+    c2 = pow(m, e2, n)
+    FIND: m 
+]
+
+SOLUTION:
+- Find u and v such that e1*u + e2*v = GCD(e1, e2) = 1
+- Compute p1 and p2:
+    p1 = pow(c1, u, n) if u>0 else pow(pow(c1, -1, n), -u, n)
+    (pow(c1, -1, n) is the inversion of c1: c1_inv)
+    p2 = pow(c2, u, n) if v>0 else pow(pow(c2, -1, n), -v, n)
+    (pow(c2, -1, n) is the inversion of c2: c2_inv)
+
+    then m = (p1*p2)%n
+
+- m is usually a large integer number so that we can use library to get the message:
+{
+    from Crypto.Util.number import long_to_bytes
+    print(long_to_bytes(m))
+    >>> message:
+}
+

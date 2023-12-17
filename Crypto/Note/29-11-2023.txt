@@ -1,0 +1,61 @@
+RSA - The cryptosystem:
+    0. Example:
+        - Secret Text: 2
+        - Sender:
+            + Encryption: (5, 14)           (e, n)
+            + Ciphertext: pow(2, 5, 14) = 4
+        - Receiver (d is kept only by him):
+            + Decryption: (11, 14)          (d, n)
+            + Text: pow(4, 11, 14) = 2
+
+    --> How do we find the way to encrypt and decrypt?
+    
+    1. Choose two large prime numbers p and q (randomly and secretly)
+    2. Compute n = p*q 
+        - n is used as the modulus and is published
+    3. Compute f(n) = LCM(p-1, q-1) or (p-1)*(q-1)
+        - LCM(a, b) = (a*b)/GCD(a, b)
+        - f(n) is kept secret
+    4. Choose an integer e such that 2<e<f(n) and GCD(e, f(n)) = 1 that is e and f(n) are co-prime
+        - The most commonly chosen value for e is 65537
+        - The smallest and fastest possible value for e is 3
+        - e is published
+    5. Determine d such that d*e ≡ 1 (mod f(n)) that is f(n)*u + 1 = e*d
+        - We can calculated d using Extended GCD's code:
+            a*u + b*v = GCD(a, b)
+            that is f(n)*u - e*d = GCD(f(n), e) = 1
+            {
+                r1, r2 = f(n), e
+                add = e
+                s1, s2, t1, t2 = 1, 0, 0, 1
+                while r2:
+                    q, r = r1//r2, r1%r2
+                    s, t = s1 - q*s2, t1 - q*t2
+                    r1,r2, s1,s2, t1,t2 = r2,r, s2,s, t2,t
+                d = s1
+                while d<0: d += add
+                print(d)
+            }
+
+            or using Python's library:
+            {
+                from Crypto.Util.number import inverse
+                print(inverse(f(n), e))
+            }
+
+            or using pow:
+            {  
+                print(pow(e, -1, f(n)))
+            }
+    6. NOTE that:
+        - Public key: n, e
+        - Private key: d, p, q, f(n)
+    
+    7. Explanation for the Example above:
+        p = 2
+        q = 7
+        n = p*q = 14
+        f(n) = LCM(p-1, q-1) = 6
+        e = 5 as 1<e<f(n) and e is co-prime with f(n)
+        d = pow(e, -1, f(n)) = pow(5, -1, 6) = 5 + 6*k for k is random
+        Choose d = 11

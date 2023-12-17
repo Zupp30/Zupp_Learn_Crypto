@@ -1,0 +1,15 @@
+Decimal to ASCII: chr() function
+
+ASCII to Decimal: ord() function
+
+Bytes to Hex: bytes.hex()
+
+Hex to Bytes: bytes.fromhex()
+
+Hex Decoded to Bytes 'b \x and then Encoded to Base64 'b...:
+    1. import base64
+    2. base64.b64encode(bytes.fromhex(flag))
+    
+Base64 Decoded to Bytes and then Encoded to Hex:
+    1. import base64
+    2. bytes.hex(base64.b64decode(flag))

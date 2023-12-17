@@ -1,0 +1,80 @@
+Euclid's Algorithm:
+    1. Find the value of GCD(a, b)
+    2. Code:
+        {
+            def GCD(a, b): return GCD(b, a%b) if b else a
+            print(GCD(a, b))
+        }
+    3. Algorithm: 
+        GCD(a, b) = a if b == 0
+        GCD(a, b) = GCD(b, a%b) if b != 0
+
+
+Extended GCD:
+    1. Let a, b be positive integers.
+    2. Euclidean Algorithm used to find integers u, v such that:
+        a*u + b*v = GCD(a, b)
+    3. if a, b are prime or co-prime then GCD(a, b) is 1
+    4. Code to find u and v:
+        {
+            r1, r2 = map(int, input().split())
+            s1, s2, t1, t2 = 1, 0, 0, 1
+            while r2:
+                q, r = r1//r2, r1%r2
+                s, t = s1 - q*s2, t1 - q*t2
+                r1,r2, s1,s2, t1,t2 = r2,r, s2,s, t2,t
+            print(r1, s1, t1)
+        }
+
+
+Modular Arithmetic 1:
+    1. Let a, b be two integers
+    2. If a%b = m then a and b are congruent modulo m
+    3. We write: a ≡ b (mod m)
+        - b is the remainder
+        - a%b = m
+    4. If m | a (m divides a) then a ≡ 0 (mod m)
+    5. Problem:
+        11 ≡ x (mod 6)
+        8146798528947 ≡ y (mod 17)
+        The result is the smaller value of x and y
+        -> Solution:
+            We get x = 11%6 and y = 8146798528947%17
+            Then print(min(x, y)) = 4
+            So the result is 4
+
+
+Modular Arithmetic 2: 
+    1. Let i, p be an integer and a prime relatively (i is not divisible by p)
+    2. Then the result of pow(i, p) ≡ i (mod p)
+        or we can say pow(i, p)%p = i
+    3. And the result of pow(i, p-1) ≡ 1 (mod p)
+        or we can say pow(i, p-1)%p = 1
+        *** if i = p then the result is 0
+
+
+Modular Inverting:
+    1. For all elements g, there exists a unique integer d such that:
+        g*d ≡ 1 (mod p)
+            --> This is multiplicative inverse of g
+            --> Example: 7*8 = 56 ≡ 1 (mod 11)
+    2. Problem: Find the inverse element 3*d ≡ 1 (mod 13) or (3*d)%13 = 1
+            --> Solution 1: Using Extended GCD:
+                a. We were convinced that a*u + b*v = GCD(a, b)
+                b. It is clear that 3*d = 1 + 13*k or it is 3*u = GCD(3, 13) + 13*v
+                c. We can see that it is similar to that a*u = GCD(a, b) + b*(-v)
+                d. Using the code written above:
+                    {
+                        r1, r2 = map(int, input().split())
+                        s1, s2, t1, t2 = 1, 0, 0, 1
+                        while r2:
+                            q, r = r1//r2, r1%r2
+                            s, t = s1 - q*s2, t1 - q*t2
+                            r1,r2, s1,s2, t1,t2 = r2,r, s2,s, t2,t
+                        print(r1, s1, t1)
+                    }
+                    we find that s1 is -4 because (3*(-4))%13 = 1 so d = s1+13 = 9
+                e. The result found is 9.
+            --> Solution 2: Using library
+                a. From Crypto.Util.number import inverse
+                b. print(inverse(3, 13)) >>> 9

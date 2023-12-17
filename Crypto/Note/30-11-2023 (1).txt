@@ -1,0 +1,52 @@
+XOR (RGB bytes of the) two images:
+    1. We need the library PIL and pwn
+        - pip install Pillow
+        - Then read two images, note that they are in the same folder as our code's
+        {
+            from PIL import Image
+            p1 = Image.open("p1.png")
+            p2 = Image.open("p2.png")
+        }
+    2. Then we create a resulting PNG file:
+        - Initialize the size of file and generate the image from its mode, size and bytes:
+        {
+            res_bytes = xor(p1.tobytes(), p2.tobytes())
+            res = Image.frombytes(p1.mode, p1.size, res_bytes)
+        }
+    3. Finally open it:
+        {
+            from PIL import ImageShow
+            res.show()
+        }
+
+
+Modular Binomials:
+    0. Form: x = (a+b)**e mod N
+    1. In cryptography, it is used in RSA encryption written in the previous note, where the integers a, b, and N are related     to the encryption and decryption keys, and the exponent e is used to encrypt a message.
+    2. Problems: Find two prime p and q:
+        Given:
+        - N = p*q, c1, c2, e1, e2
+        - c1 = (2*p + 3*q)**e1 mod N
+        - c2 = (5*p + 7*q)**e2 mod N
+    3. Solution:
+        - Upper c1 and c2 so that they have the same exponent: e1*e2
+        - We need to isolate q so it is necessary to make the two equation to had the same value
+        - NOTE: we should use Newton's Binomails Theorem that makes (a+b)**k mod N = a**k + b**k mod N if a|N and b|N
+        - Multiply by a1**(-e1*e2) in the c1 equation reduce P factor to 1
+        - Multiply by a2**(-e1*e2) in the c2 equation reduce P factor to 1
+        - Then, after subtracting c1 to c2 to get the number D, we have a very nice form of q 
+        - It is clear that q|D and q|N making q been easily calculated: q = GCD(D, N)
+        - Finally, N = p*q making p = N/q
+    4. Code:
+        {
+            from math import *
+            N, c1, c2, e1, e2 = , , , ,
+            D = pow(2, -e1*e2, N)*pow(c1, e2, N) - pow(5, -e1*e2, N)*pow(c2, e1, N)
+        """
+        Note that we can use D = pow(2, e1*e2, N)*pow(c1, e2, N) - pow(5, e1*e2, N)*pow(c2, e1, N) instead
+        """
+            q = gcd(D, N)
+            p = N/q
+        }
+
+

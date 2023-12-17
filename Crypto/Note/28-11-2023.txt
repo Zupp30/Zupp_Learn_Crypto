@@ -1,0 +1,80 @@
+Chinese Remainder Theorem:
+    - It gives a unique solution to a set of linear congruence if their moduli are co-prime
+        x ≡ a[1] mod n[1]
+        x ≡ a[2] mod n[2]
+        ...
+        x ≡ a[n] mod n[n]
+
+        and x ≡ a mod N such that N = n[1] * n[2] * ... * n[n]
+    - Problem:
+        Given
+            x ≡ 2 mod 5
+            x ≡ 3 mod 11
+            x ≡ 5 mod 17 
+        Find the integer a such that x ≡ a mod 935
+    --> Solution 1:
+        - We know that x = 17*m + 5 = 11*n + 3 = 5*p + 2
+        - Firstly, x ≡ 3 mod 11 that is 17*m + 5 ≡ 3 mod 11
+        that is 17*m + 5 ≡ 14 mod 11
+        that is 17*m ≡ 9 mod 11
+        that is 17*m ≡ 9 + 11*10 mod 11
+        that is 17*m ≡ 119 ≡ 17*7 mod 11
+        that is m ≡ 7 mod 11 that means m = 11*k + 7 making x = 17*(11*k + 7) + 5 = 187*k + 124
+
+        - Secondly, x = 187*k + 124 and x ≡ 2 mod 5 
+        that is 187*k + 124 ≡ 2 mod 5
+        that is 187*k + 124 ≡ 2 + 5*25 mod 5
+        that is 187*k ≡ 3 mod 5
+        that is 187*k ≡ 3 + 5*149 mod 5
+        that is 187*k ≡ 187*4 mod 5
+        that is k ≡ 4 mod 5 that means k = 5*i + 4 making x = 187*(5*i + 4) + 124 = 935*i + 872 
+
+        >>> x = 935*i + 872
+        that means x ≡ 872 (mod 935)
+        >>> a = 872
+        --> Code to shorten the calculation:
+            {
+                def find_eqv_mod(k, m, n):
+                    i = 0
+                    while True:
+                        test = m + n*i
+                        if(test % k == 0):
+                            print(f"equivalent form of {m} mod {n} is {test} = {test//k}*{k}")
+                            return
+                        i+=1
+
+                find_eqv_mod(17, 9, 11)
+                find_eqv_mod(187, 3, 5)
+            }
+
+        --> Solution 2: Using Chinese Remainder Theorem:
+            1. We need to find 3 kinds of variable named a[k], n[k], y[k] such that:
+                a[k] is given in the problem: a[1] = 2, a[2] = 3, a[3] = 5
+                n[k] is calculated: n[k] = N//m[k] 
+                    n[1] = 935//5 = 187
+                    n[2] = 935//11 = 85
+                    n[3] = 935//17 = 55
+                y[k] is calculated: y[k] = pow(n[k], -1, m[k])
+                    y[1] = 3
+                    y[2] = 7
+                    y[3] = 13
+            2. Then we will find x = (a[1]*n[1]*y[1] + a[2]*n[2]*y[2] + a[3]*n[3]*y[3])%N
+                    >>> x = 872
+            3. Code:
+            {
+                a = [2, 3, 5]
+                m = [5, 11, 17]
+                n = [0, 0, 0]
+                y = [0, 0, 0]
+                N = 5*11*17
+                x = 0
+
+                #Calculate n[i] and y[i]:
+                for i in range(3): 
+                    n[i] = N//m[i]
+                    y[i] = pow(n[i], -1, m[i])
+                    x += a[i]*n[i]*y[i]
+                print(x%N)
+            }
+
+

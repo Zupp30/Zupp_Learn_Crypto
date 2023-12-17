@@ -1,0 +1,6 @@
+AES - SYMMETRIC CRYPTOGRAPHY:
+    1.
+    2. Resisting Bruteforce: 
+        - Grover's Algorithm and Shor's Algorithm
+        - The biclique attack is the best single-key attack agains AES
+    3. 

@@ -1,0 +1,5 @@
+from Crypto.Util.number import *
+flag = '48657921205468697320697320616E206578616D706C65206F662062617365313620656E636F64696E672E'
+flag = bytes.fromhex(flag)
+print(flag)
+
