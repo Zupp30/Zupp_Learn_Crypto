@@ -1,10 +1,10 @@
-**Write up KCSC CTF 2023**
+# Write up KCSC CTF 2023
 ---
 
-**1. Ez_Ceasar (Easy)**
+## 1. Ez_Ceasar (Easy)
 ---
 
-**Mô tả:** 
+### Mô tả: 
 - Bài cung cấp flag đã được mã hóa bằng Caesar Cipher với bảng alphabet customed
 - Challenge code: 
 ```
@@ -26,7 +26,7 @@ print(f"{ct=}")
 # ct='ldtdMdEQ8F7NC8Nd1F88CSF1NF3TNdBB1O'
 ```
 
-**Lời giải:**
+### Lời giải:
 - Vì bài không sử dụng alphabet 26 chữ cái nên chúng ta sẽ in thử bảng alphabet customed với chỉ số tương ứng:
 
 ```
@@ -124,10 +124,10 @@ print(pt)
 > KCSC{C3as4r_1s_Cl4ss1c4l_4nd_C00l}
 ---
 
-**2. A3S_C1R (Easy)**
+## 2. A3S_C1R (Easy)
 ---
 
-**Mô tả:**
+### Mô tả:
 - Bài cung cấp flag được mã hóa qua AES mode CTR
 - Challenge code:
 ```
@@ -153,7 +153,7 @@ print(f"encrypted2: {encrypted2.hex()}")
 # encrypted2: 410bc8addf6036125f5fe17d4bb61c00ba565a9e71d1bf846f625eeac5bfa972f9e7c4fd60800ac9aa689f9b280f5a09fd3768674401ac60
 ```
 
-**Lời giải:**
+### Lời giải:
 - Vì bài thuộc dạng AES với mode CTR, phương thức là XOR plaintext với các key. Tuy nhiên do cả hai đoạn encrypted và encrypted2 đều reuse encrypto, ta có:
     - xor(b"TODO:...", key) = encrypted
     - xor(flag, key) = encrypted2
@@ -183,10 +183,10 @@ b'KCSC{A3S_CTR_bU1_K1nd4_3asY_y0u_5h0uld_h4v3_s0lv3d_th1s}\xee\x00\xd6\xe7g\x8f\
 > KCSC{A3S_CTR_bU1_K1nd4_3asY_y0u_5h0uld_h4v3_s0lv3d_th1s}
 ---
 
-**3. Is_it_CRT (Easy)**
+## 3. Is_it_CRT (Easy)
 ---
 
-**Mô tả:**
+### Mô tả:
 - Bài cho hint về CRT(vô nghĩa) và RSA(cho e - pub.expo) để giải flag 
 - Challenge text:
 ```
@@ -199,7 +199,7 @@ c2 = 734074232330240733042244964768422685007071225315250145503380137938202394903
 c3 = 55645356229576991726290820253166125559920178689701167851283019943562627606690176220109383257847017836775793827103662981412236830329482802454580242635314923411008056558210411063545158619407523528841487658337051518783958350562281456553772083003206890498586599056920249966475452673566793925144997181076187273153
 
 ```
-**Lời giải:**
+### Lời giải:
 - Nhận thấy bài cho e (hint về RSA) và cho 3 cặp số (n, c), tuy nhiên flag là duy nhất nên chúng ta chỉ cần giải flag với một cặp (n, c)
 - Somehow n1 không thể factor sử dụng factor.db, bên cạnh đó ta nhận thấy gcd(n1, n2) != 1 nên n1, n2 không là các số nguyên tố cùng nhau, điều đó chứng minh n1 có thể factor được bằng cách sử dụng gcd(n1, n2); từ đó ta tìm được ước nguyên tố p, q của n1
 ```
@@ -224,7 +224,7 @@ print(long_to_bytes(pt))
 > **Flag:**
 > KCSC{N0t_Rea11y_4_CR1_4tt4ck_R1ght??!!??}
 
-**NOTE:**
+### NOTE:
 - Note 1: Chúng ta không nhất thiết phải tìm ra hai số p và q, chỉ cần một số p đã có thể giải quyết bài toán
 - Note 2: Phi hàm euler của p (fp) được sử dụng để đếm số các số nguyên tố cùng nhau với p, tuy nhiên trong bài, p là số nguyên tố nên fp = p-1
 - Note 3: Đối với Multiparty RSA (MR) như bài này, điều kiện cần của bài là n1, n2, n3 phải đôi một là hai số nguyên tố cùng nhau. Tuy nhiên đề bài không thỏa mãn nên ta có thể rút gọn các số n1, n2, n3 về gcd(n1, n2) , gcd(n2, n3), gcd(n3, n1)
@@ -236,10 +236,10 @@ print(long_to_bytes(pt))
 ```
 ---
 
-**4. Ceasar_but_Harder!!!! (Medium)**
+## 4. Ceasar_but_Harder!!!! (Medium)
 ---
 
-**Mô tả:**
+### Mô tả:
 - Bài cung cấp flag đã được mã hóa bằng Caesar Cipher với bảng alphabet customed (64 kí tự sau khi mất đi 3 kí tự bất kì)
 - Challenge code:
 ```
@@ -267,7 +267,7 @@ print(f"{ct=}")
 # ct='2V9VnRcNosvgMo4RoVfThg8osNjo0G}mmqmp'
 ```
 
-**Lời giải:**
+### Lời giải:
 - Là bài khó hơn Ez_Ceasar nhưng vẫn dựa trên ý tưởng cũ, ta có được chỉ số trên bảng chữ cái raw (67 kí tự) tương ứng với known text là KCSC{}
 - KCSC{} ---> 2V9Vnp
 - Như vậy:
