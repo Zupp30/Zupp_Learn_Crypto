@@ -1,0 +1,16 @@
+DATA FORMATS:
+    1. Privacy-Enhanced Mail:
+        - PEM is a popular format for sending keys, certificates and other cryptography graphic materials.
+        - It wraps base64-encoded data by a one-line header and footer to indicate how to parse the data within.
+        - The data that gets base64-encoded is DER-encoded ASN.1 values.
+        {
+            #How to get the number from PEM file:
+            from Crypto.PublicKey import RSA
+            f = open('[filename]', 'r')
+            a = RSA.importKey(f.read())
+            print(a.[something])
+        }
+    2. Secure Shell Protocol (SSH):
+        - It is a network protocol that uses cryptography establish a secure channel over an insecure network.
+        - It enables devs and systems administrators to run commands on servers from the other side of the world, without their password being sniffed or data being stolen.
+        - Therefore, it is critical to the security of the web
