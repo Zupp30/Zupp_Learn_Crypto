@@ -1,4 +1,4 @@
-# Write up KCSC CTF 2023
+# Write up KCSC CTF 2023 
 ---
 
 ## 1. Ez_Ceasar (Easy)
@@ -402,5 +402,3 @@ for i in range(20):
 > **Flag:**
 > KCSC{b4by_m4th_f0r_b4by_crypt0}
 ---
-
-### NOTE: 
