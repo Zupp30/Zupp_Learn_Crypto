@@ -318,4 +318,89 @@ giúp ta thay thế được các kí tự có trong flag đã mã hóa, từ đ
 
 > **Flag:**
 > KCSC{y0u_be4t_My_C3A54R_bu7_HoW!!?!}
-> 
+
+
+## 5. Basic Math (Medium)
+---
+
+### Mô tả:
+- Bài cung cấp flag sẽ được revealed sau 20 lần nhập đúng giá trị của x và h sao cho thỏa mãn phương trình
+- Challenge code:
+```
+from Crypto.Util.number import getPrime
+
+flag = b'KCSC{fake_flag}'
+
+def verify(g, p, y, x, k, h):
+    return (y*x*pow(g, k, p)) % p == pow(g, h, p)
+
+p = getPrime(256)
+g = getPrime(128)
+y = 65537
+
+lst_x = []
+lst_h = []
+
+print(f"p = {p}")
+print(f"g = {g}")
+print(f"y = {y}")
+
+try:
+    for i in range(20):
+        x = 0
+        h = 0
+        x = int(input("x = "))
+        h = int(input("h = "))
+        if x in lst_x or h in lst_h:
+            print('get out !!!')
+            exit(-1)
+        rs = verify(g, p, y, x, i, h)
+        if rs:
+            lst_x.append(x)
+            lst_h.append(h)
+        else:
+            print('get out !!!')
+            exit(-1)
+            
+    flag = open('flag.txt', 'rb').read()
+    print(flag)
+except:
+    print("something went wrong")
+```
+
+### Lời giải:
+- Đối với bài, điều quan trọng là phải tìm được giá trị của x và h thỏa mãn. Bên cạnh đó, với phép toán mô-đun, một bài toán sẽ có rất nhiều kết quả (có nhiều x với mỗi h tương ứng). Vì vậy, ta cần phải tìm được liên hệ giữa x và h, qua đó giải và nhận cờ.
+- Tuy nhiên, biến số i được thay đổi += 1 sau mỗi lần nhập kết quả chính xác; và hai giá trị (x, h) không được nhập lại nên cần phải lưu ý.
+- Mở đầu bài toán, chúng ta cần giải phương trình: ```(y*x*pow(g, k, p)) % p == pow(g, h, p)```
+- Từ đây ta có các phép biến đổi:
+```
+            x * y * (pow(g, k, p)) ≡ g**h   (mod p)
+such that   x * pow(g, k, p) ≡ inverse(y, p) * (g**h)   (mod p) [Ta chuyển y sang VP được vì y và p là coprime]
+such that   x * (g**k) ≡ inverse(y, p) * (g**h)   (mod p) [Có thể dùng assert để kiểm chứng biến đổi từ dòng trên xuống dòng dưới]
+such that   x ≡ inverse(y, p) * (g**(h-k))   (mod p)
+- Đến được bước này, ta đã hoàn thành công việc tìm mối liên hệ giữa x và h, vì là phép mô-đun nên ta có thể chọn x tùy ý; ở đây chọn x = inverse(y, p)*pow(g, h-k) + p
+- Tuy nhiên ta cần phải thay đổi hiệu h-k để (x, h) khác nhau qua mỗi lần nhập, vì vậy gọi delta = h-k, ta có code:
+```
+```
+from Crypto.Util.number import inverse
+
+#p = 
+#g = 
+#y = 
+
+
+delta = 0
+for i in range(20):
+    x = inverse(y, p)*pow(g, delta) + p
+    print(x, delta+i, end = '\n\n\n')
+    #assert (x*y*pow(g, i, p))%p == pow(g, delta+i, p)
+    delta += 1
+```
+- Kết nối với ```nc 103.162.14.116 16002```, ta nhận giá trị của p, g, y, thay vào code và nhận output, nhập các đáp án lần lượt và flag sẽ được trả về:
+```b'KCSC{b4by_m4th_f0r_b4by_crypt0}'```
+
+> **Flag:**
+> KCSC{b4by_m4th_f0r_b4by_crypt0}
+---
+
+### NOTE: 
