@@ -318,7 +318,7 @@ giúp ta thay thế được các kí tự có trong flag đã mã hóa, từ đ
 
 > **Flag:**
 > KCSC{y0u_be4t_My_C3A54R_bu7_HoW!!?!}
-
+---
 
 ## 5. Basic Math (Medium)
 ---
