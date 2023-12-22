@@ -117,7 +117,7 @@ nhận được
 ct = 'ldtdMdEQ8F7NC8Nd1F88CSF1NF3TNdBB1O'
 pt = ''
 
-for i in ct: pt += (alphabet[(alphabet.index(i) + 42) % 67])
+for i in ct: pt += (alphabet[(alphabet.index(i) - 42) % 67])
 print(pt)
 ```
 > **Flag:**
