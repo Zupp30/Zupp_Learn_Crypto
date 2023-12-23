@@ -573,7 +573,7 @@ print(enc)
   c4-c3+5*(c2-c1) ≡ 0 (mod n)
   ``````
 
-- Từ đó tìm được ```n = c4-c3+5*(c2-c1)```, chọn n là số nguyên tố phù hợp, ta dễ dàng tìm được a và b sử dụng sagemath. Cuối cùng, ta đã có được a, b, n; sử dụng hàm giải mã D(E(x)) = (inverse(a, n)*(E(x) - b)) mod n
+- Từ đó tìm được ```n = c4-c3+5*(c2-c1)```, chọn n là số nguyên tố phù hợp, ta dễ dàng tìm được a và b sử dụng sagemath. Cuối cùng, ta đã có được a, b, n; sử dụng hàm giải mã D(E(x)) = (inverse(a, n)*(E(x) - b)) mod n ta nhận được flag.
 
 - CODE:
 
