@@ -536,7 +536,7 @@ print(enc)
   c = (key[1]*c + key[2])%n
   
   nên:	c = (key[1]*(m + key[0]) + key[2])%n
-  hay		c = key[1]*m + key[0]*key[1] + key[2] (mod n)
+  hay	c = key[1]*m + key[0]*key[1] + key[2] (mod n)
   với a = key[1]
   và  b = key[0]*key[1] + key[2]
   ``````
