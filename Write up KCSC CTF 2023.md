@@ -538,7 +538,7 @@ print(enc)
   nên:	c = (key[1]*(m + key[0]) + key[2])%n
   hay		c = key[1]*m + key[0]*key[1] + key[2] (mod n)
   với a = key[1]
-  	b = key[0]*key[1] + key[2]
+  và  b = key[0]*key[1] + key[2]
   ``````
 
 - Dựa vào known text ta biết được các kí tự sau:
