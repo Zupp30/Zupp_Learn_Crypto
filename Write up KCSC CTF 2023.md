@@ -491,7 +491,6 @@ Cipher = 36786203972557438527888537411079861088609816763097233316417302905447310
 ---
 
 ## 7. Affinity (Medium)
-
 ---
 
 ### Mô tả:
@@ -601,3 +600,62 @@ print(enc)
 
 > **Flag:**
 > KCSC{Wow!_y0u_be4t_m3_Thr33_7ime5_In_a_d4y_H0w_C0u1D_y0u_d0_1h4t!!??!}
+
+---
+
+## 8. R54 (Medium)
+---
+
+### Mô tả:
+- Challenge code:
+```
+from Crypto.Util.number import * 
+import hashlib
+
+p = getPrime(1024) 
+q = getPrime(1024) 
+n = p*q 
+print(n)
+e = 65537
+
+flag = b'KCSC{s0m3_r3ad4ble_5tr1ng_like_7his}'
+
+m = len(flag) 
+if m%2: 
+    flag+= bytes(0x01) 
+
+
+def dbytes2int(b): 
+    return b[0]*256+b[1] 
+
+
+ciphertxt = b''
+for i in range(0, len(flag), 2): 
+    plt = dbytes2int(flag[i:i+2])
+    c = pow(plt,e,n)
+    # print(c) 
+    h = hashlib.sha256(long_to_bytes(c)).hexdigest()
+    k = bytes.fromhex(h[:8])
+    # print(h)
+    ciphertxt += k
+
+# print(ciphertxt)
+with open("./Chall_med_4/enc_msg.bin", "wb") as f: 
+    f.write(ciphertxt)
+
+# n = 20675528040670526996752940893288629654073674678976458593562885254372323957903532876778575683971980608430988271483012687068546409103618011471627912308716870404710200387846081948584012645579489130659361868569525868828863142513688732813453572263121568340255562594977295513766156580889393986895191199436845252360294885224181350174035317346113446210888214332389015986819447524673296950196284975878585211748477505072532061859389809017849787533731620947172314201145532242513117285325664785809436379731158841381092296256976553945301076520532403729003821419792192809111636400447743715443579056636708987896016462504011033448823
+```
+
+### Lời giải:
+- Sử dụng code:
+```
+with open("enc_msg_fixed.bin", "rb") as f: print(f.read())
+```
+ta nhận được flag đã encrypted:
+```
+b'\xec\xa4\xb9K\xe6\xb9&}M\rO9\xad\xfd\xfe\x16\xbcN\xb0\x9b\x88\xf2\xac\xa8\xf1\x89\x8f\x81\x8fAT\\\xacI$a]\x82\xf3\xd7\xffn\xa1\xc0\xc9\x11\x06\xe5h?]q'
+```
+- Bài khó nhưng có thể Brute force từng **đôi kí tự** rồi check với dãy bytes trên, suy ra:
+
+> **Flag:**
+> KCSC{r54_!5_51Mp|3_r1gH+?}
