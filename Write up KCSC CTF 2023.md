@@ -659,3 +659,137 @@ b'\xec\xa4\xb9K\xe6\xb9&}M\rO9\xad\xfd\xfe\x16\xbcN\xb0\x9b\x88\xf2\xac\xa8\xf1\
 
 > **Flag:**
 > KCSC{r54_!5_51Mp|3_r1gH+?}
+---
+
+## 9. Random (Medium)
+---
+
+### Mô tả:
+- Bài có flag đã được encrypted bằng AES mode CBC.
+- Challenge code:
+```
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+import random, time
+import struct
+
+with open('flag.txt', 'r') as f:
+    FLAG = f.read()
+
+def aes_encrypt(key, plaintext, iv):
+    key = key.ljust(32)[:32]
+    plaintext = plaintext.encode()
+    iv = iv.encode()
+
+    padder = padding.PKCS7(128).padder()
+    padded_plaintext = padder.update(plaintext) + padder.finalize()
+
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+    encryptor = cipher.encryptor()
+
+    ciphertext = encryptor.update(padded_plaintext) + encryptor.finalize()
+
+    return ciphertext
+
+def aes_decrypt(key, ciphertext, iv):
+    key = key.ljust(32)[:32]
+    iv = iv.encode()
+
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+    decryptor = cipher.decryptor()
+
+    padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()
+
+    unpadder = padding.PKCS7(128).unpadder()
+    plaintext = unpadder.update(padded_plaintext) + unpadder.finalize()
+
+    return plaintext.decode()
+
+random.seed(int(time.time()/4))
+
+iv = str(random.randint(10**(16-1), 10**16 - 1))
+with open('/dev/random', 'rb') as f:
+    num = int.from_bytes(f.read(3), byteorder='little')
+
+random.seed(num)
+
+num = (num >> 1 << 1) | random.choice([0,1])
+key = num.to_bytes(3, byteorder='little')
+
+cipher_text = aes_encrypt(key, FLAG, iv)
+cipher_text = ' '.join(f'{byte:02x}' for byte in struct.unpack(f'{len(cipher_text)}B', cipher_text))
+print('cipher text:', cipher_text)
+exit(0)
+```
+
+### Lời giải:
+- Với AES mode CBC, ta cần tìm được key, ciphertext, iv rồi sử dụng hàm giải mã đã có sẵn để in ra flag.
+- Với **iv**, seed sẽ được random dựa vào thời gian hiện tại. Vì là seed nên chúng ta chỉ cần sử dụng đúng hàm tương tự như source code là có thể nhận được **iv**:
+    ```
+    random.seed(int(time.time()/4))
+    iv = str(random.randint(10**(16-1), 10**16 - 1))
+    ```
+- Với **ciphertext**, bản mã trên server là bản mã đã bị thay đổi format nên ta cần phải chuyển ngược lại thành dạng đúng của **ciphertext**:
+    ```
+    cipher_text = '...'
+    ct = b''.join(struct.pack('B', int(byte, 16)) for byte in cipher_text.split())
+    ```
+- Cuối cùng, **key** là thành phần khó tìm nhất trong bài, đẩy độ khó lên thành medium. Với một số **num** bị ẩn đi hoàn toàn trong bài, code thực hiện ```random.seed(num)``` rồi tạo ra **key**:
+    ```
+    num = (num >> 1 << 1) | random.choice([0,1])
+    key = num.to_bytes(3, byteorder='little')
+    ```
+- Nhận thấy **num** là số int được chuyển từ 3 bytes nên giới hạn của **num** sẽ là ```[1, 2**24]```, đến đây chúng ta cần brute force rồi tìm ra chuỗi có chứa ```'KCSC{'```, khi đó flag sẽ được revealed hoàn toàn. Nhưng **num** được ```|``` với hoặc 0 hoặc 1 nên ta cần brute force với hai trường hợp riêng.
+- Bên cạnh đó, hàm giải mã có thể được đơn giản hóa đi thành:
+    ```
+    def aes_decrypt(key, ciphertext, iv):
+        key = key.ljust(32)[:32]
+        iv = iv.encode()
+        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+        decryptor = cipher.decryptor()
+        padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()
+        return padded_plaintext
+    ```
+- Ta có code (với trường hợp choice = 0):
+    ```
+    from pwn import *
+    from cryptography.hazmat.backends import default_backend
+    from cryptography.hazmat.primitives import padding
+    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+    import struct
+
+    def aes_decrypt(key, ciphertext, iv):
+        key = key.ljust(32)[:32]
+        iv = iv.encode()
+        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+        decryptor = cipher.decryptor()
+        padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()
+        return padded_plaintext
+
+    random.seed(int(time.time()/4))
+    iv = str(random.randint(10**(16-1), 10**16 - 1))
+    s = remote("103.162.14.116", 16001)
+    print(iv, s.recv())
+
+    #iv = str(9032022690947522) 
+    #cipher_text = '96 af 0a c3 a9 80 4e 54 ae 37 99 07 8e 90 06 1d 8f a9 57 d3 f2 d5 d4 0a 4f 60 30 49 5b 4d 38 16'
+    ct = b''.join(struct.pack('B', int(byte, 16)) for byte in cipher_text.split())
+    for num in range(1, 2**24):
+        random.seed(num)
+        num = (num >> 1 << 1) | 0
+        key = num1.to_bytes(3, byteorder='little')
+        pt = aes_decrypt(key, ct, iv)
+        if("KCSC{" in str(pt)): 
+            print(pt)
+            break
+    ```
+    - Với trường hợp choice = 1, ta làm tương tự
+    - Nên thử trường hợp choice = 1 vì flag được giải bằng trường hợp này
+
+> **Flag:**
+> KCSC{Brut3_F0rc3_3asy_Pe4sy!}
+
+**NOTE:** 
+- Bài dễ gây nản nên thay vì sử dụng ```range(1, 2**24)``` thì ta nên chia thành các khoảng nhỏ hơn. 
+- Thử với ```range(2**20, 2**24)``` (Đây là đoạn tìm ra flag) để tránh mất thời gian.
