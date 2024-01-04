@@ -174,8 +174,7 @@ print(long_to_bytes(pt))
 - Given `n`, `e`, `ct`, recover the flag.
 ### Solution:
 - Using http://www.factordb.com/, we found that `n` is a square number computed by a prime.
-- Giving `n` = `p^2` with `p` being a prime, the Euler's totient function works that:
-![image](https://hackmd.io/_uploads/SkIo1imOp.png)Therefore, `fn = p*(p-1)`
+- Giving `n` = `p^2` with `p` being a prime, the Euler's totient function works that: ![image](https://wikimedia.org/api/rest_v1/media/math/render/svg/0a123bcd1c5c3214b80f4eeaa5d7f2e3e0700255) Therefore, `fn = p*(p-1)`
 - Code:
 ```python
 from Crypto.Util.number import inverse, long_to_bytes
@@ -193,7 +192,7 @@ print(long_to_bytes(pt))
 >>>b'crypto{squar3_r00t_i5_f4st3r_th4n_f4ct0r1ng!}'
 ```
 ### Note:
-- Another way to solve this problem is to compute Euler's totient function using its original formula: ![image](https://hackmd.io/_uploads/Sk0OWj7Oa.png) since `n` is special, `fn = n*(1 - 1/p)` (p is the only divisor of n) 
+- Another way to solve this problem is to compute Euler's totient function using its original formula: ![image](https://wikimedia.org/api/rest_v1/media/math/render/svg/bb6b6388ded7d1e160a3bd82b60c5b593947088a) since `n` is special, `fn = n*(1 - 1/p)` (p is the only divisor of n) 
 such that: `fn = n - n/p` 
 such that: `fn = n - p`
 
@@ -203,7 +202,7 @@ such that: `fn = n - p`
 ### Description:
 - Using one prime factor was definitely a bad idea so I'll try using over 30 instead.
 ### Solution:
-- The difficulty is there are 30+ prime divisors of `n` so we will use sage to factorized n and compute its totient function: ![image](https://hackmd.io/_uploads/Sk0OWj7Oa.png)
+- The difficulty is there are 30+ prime divisors of `n` so we will use sage to factorized n and compute its totient function: ![image](https://wikimedia.org/api/rest_v1/media/math/render/svg/bb6b6388ded7d1e160a3bd82b60c5b593947088a)
 - Code:
 ```python
 from Crypto.Util.number import inverse, long_to_bytes
