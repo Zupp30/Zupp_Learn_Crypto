@@ -1,4 +1,4 @@
-# Write up KCSC CTF 2023 
+# Write up KCSC CTF 2023 (DONE 9/10) 
 ---
 
 ## 1. Ez_Ceasar (Easy)
@@ -7,7 +7,7 @@
 ### Mô tả: 
 - Bài cung cấp flag đã được mã hóa bằng Caesar Cipher với bảng alphabet customed
 - Challenge code: 
-```
+```python
 import string
 import random
 
@@ -29,7 +29,7 @@ print(f"{ct=}")
 ### Lời giải:
 - Vì bài không sử dụng alphabet 26 chữ cái nên chúng ta sẽ in thử bảng alphabet customed với chỉ số tương ứng:
 
-```
+```python
 import string
 
 alphabet = string.ascii_letters + string.digits + "!{_}?"
@@ -38,7 +38,7 @@ for i in range(68):
     print(i, alphabet[i], sep = ' is ')
 ```
 nhận được
-```
+```python
 0 is a
 1 is b
 2 is c
@@ -113,7 +113,7 @@ nhận được
 (28[C] + key)%67 = 3[d]
 ```
 - Dễ dàng tìm ra được valid key là 42, từ đó chúng ta giải mã:
-```
+```python
 ct = 'ldtdMdEQ8F7NC8Nd1F88CSF1NF3TNdBB1O'
 pt = ''
 
@@ -121,7 +121,7 @@ for i in ct: pt += (alphabet[(alphabet.index(i) - 42) % 67])
 print(pt)
 ```
 > **Flag:**
-> KCSC{C3as4r_1s_Cl4ss1c4l_4nd_C00l}
+> `KCSC{C3as4r_1s_Cl4ss1c4l_4nd_C00l}`
 ---
 
 ## 2. A3S_C1R (Easy)
@@ -130,7 +130,7 @@ print(pt)
 ### Mô tả:
 - Bài cung cấp flag được mã hóa qua AES mode CTR
 - Challenge code:
-```
+```python
 from Crypto.Cipher import AES
 from Crypto.Util import Counter
 from Crypto import Random
@@ -165,7 +165,7 @@ A^0 = A
 A^A = 0
 ```
 - Code:
-```
+```python
 from pwn import xor
 
 encrypted1 = '5e07dfa19e2b256c205df16b349c0863a15839d056ada1fb425449f2f9af9563eccca6d15cb01aabbe338c851f7b163982127033787fff49e74e3e09f0aee048a1d5b29f5a'
@@ -180,7 +180,7 @@ nhận được:
 b'KCSC{A3S_CTR_bU1_K1nd4_3asY_y0u_5h0uld_h4v3_s0lv3d_th1s}\xee\x00\xd6\xe7g\x8f\x9a\x16\xbb\xc4\x14\xa7\x1b'
 ```
 > **Flag:**
-> KCSC{A3S_CTR_bU1_K1nd4_3asY_y0u_5h0uld_h4v3_s0lv3d_th1s}
+> `KCSC{A3S_CTR_bU1_K1nd4_3asY_y0u_5h0uld_h4v3_s0lv3d_th1s}`
 ---
 
 ## 3. Is_it_CRT (Easy)
@@ -189,7 +189,7 @@ b'KCSC{A3S_CTR_bU1_K1nd4_3asY_y0u_5h0uld_h4v3_s0lv3d_th1s}\xee\x00\xd6\xe7g\x8f\
 ### Mô tả:
 - Bài cho hint về CRT(vô nghĩa) và RSA(cho e - pub.expo) để giải flag 
 - Challenge text:
-```
+```python
 e = 65537
 n1 = 130970791706695167120816954281347910242271741380848697030582097380414164464669582077501935100534315672736591163867589462360532537474343007717114862677036219839049659638193590918904482709879798794387701429067711189339541090962315499562919351155480834958649104605830303759610881412035697138279914413112238740763
 n2 = 113641455496435721193134074028475386176456392079379291332104843107150260592574545964197594045447402797691233409140148854647138554130435281685396694982224051757694663968334285795059648876331981127831706285859528658283228869511829743448319293252496057080243050538084390601445944010478822202867577802474801791329
@@ -202,18 +202,18 @@ c3 = 556453562295769917262908202531661255599201786897011678512830199435626276066
 ### Lời giải:
 - Nhận thấy bài cho e (hint về RSA) và cho 3 cặp số (n, c), tuy nhiên flag là duy nhất nên chúng ta chỉ cần giải flag với một cặp (n, c)
 - Somehow n1 không thể factor sử dụng factor.db, bên cạnh đó ta nhận thấy gcd(n1, n2) != 1 nên n1, n2 không là các số nguyên tố cùng nhau, điều đó chứng minh n1 có thể factor được bằng cách sử dụng gcd(n1, n2); từ đó ta tìm được ước nguyên tố p, q của n1
-```
+```python
 from numpy import gcd
 
 p, q = gcd(n1, n2), n1//gcd(n1, n2)
 ```
 nhận được
-```
+```python
 p = 11353881877324711003979802139615058395337484069869327204614462296439884334893855149363852440127790628732414633471088851321186317538207960792596592119477097
 q = 11535331538745540714738141702022923616940235271330067953307665528444215968500323164146763365026710855489137432279572472935140454733482859072047176027793379
 ```
 đối với một bài RSA, tìm ra được p và q giúp ta dễ dàng giải mã flag:
-```
+```python
 from Crypto.Util.number import long_to_bytes, inverse
 
 fn = (p-1)*(q-1) #phi hàm euler
@@ -222,14 +222,14 @@ pt = pow(c1, d, n1)
 print(long_to_bytes(pt))
 ```
 > **Flag:**
-> KCSC{N0t_Rea11y_4_CR1_4tt4ck_R1ght??!!??}
+> `KCSC{N0t_Rea11y_4_CR1_4tt4ck_R1ght??!!??}`
 
 ### NOTE:
 - Note 1: Chúng ta không nhất thiết phải tìm ra hai số p và q, chỉ cần một số p đã có thể giải quyết bài toán
 - Note 2: Phi hàm euler của p (fp) được sử dụng để đếm số các số nguyên tố cùng nhau với p, tuy nhiên trong bài, p là số nguyên tố nên fp = p-1
 - Note 3: Đối với Multiparty RSA (MR) như bài này, điều kiện cần của bài là n1, n2, n3 phải đôi một là hai số nguyên tố cùng nhau. Tuy nhiên đề bài không thỏa mãn nên ta có thể rút gọn các số n1, n2, n3 về gcd(n1, n2) , gcd(n2, n3), gcd(n3, n1)
 - Dựa vào các note 1, 2, 3 ta có thể rút gọn công đoạn tính toán và tìm ra flag:
-```
+```python
 f = gcd(n1, n2)-1
 pt = pow(c1, inverse(e, f), gcd(n1, n2))
 print(long_to_bytes(pt))
@@ -242,7 +242,7 @@ print(long_to_bytes(pt))
 ### Mô tả:
 - Bài cung cấp flag đã được mã hóa bằng Caesar Cipher với bảng alphabet customed (64 kí tự sau khi mất đi 3 kí tự bất kì)
 - Challenge code:
-```
+```python
 import string
 import random
 
@@ -281,7 +281,7 @@ print(f"{ct=}")
     - Chữ cái bị mất thứ ba nằm trong (36, 44) | k = +19 ---> +18
 - Do vậy, tất cả các chữ cái từ [44, 66] đều dịch chuyển +17 hay -50
 - Dựa vào đó, code:
-```
+```python
 import string
 
 alphabet = string.ascii_letters + string.digits + "!{_}?"
@@ -289,7 +289,7 @@ for i in range(44, 67):
     print(i, 'from', alphabet[i%67], 'to', alphabet[(i+17)%67])
 ```
 cho ra output:
-```
+```python
 44 from S to 9
 45 from T to !
 46 from U to {
@@ -317,7 +317,7 @@ cho ra output:
 giúp ta thay thế được các kí tự có trong flag đã mã hóa, từ đó làm tương tự với hai khoảng (0,28) và (28, 36), thử các số ở hai cận kết hợp phán đoán các từ có trong flag, ta giải mã được cờ
 
 > **Flag:**
-> KCSC{y0u_be4t_My_C3A54R_bu7_HoW!!?!}
+> `KCSC{y0u_be4t_My_C3A54R_bu7_HoW!!?!}`
 ---
 
 ## 5. Basic Math (Medium)
@@ -326,7 +326,7 @@ giúp ta thay thế được các kí tự có trong flag đã mã hóa, từ đ
 ### Mô tả:
 - Bài cung cấp flag sẽ được revealed sau 20 lần nhập đúng giá trị của x và h sao cho thỏa mãn phương trình
 - Challenge code:
-```
+```python
 from Crypto.Util.number import getPrime
 
 flag = b'KCSC{fake_flag}'
@@ -381,7 +381,7 @@ such that   x ≡ inverse(y, p) * (g**(h-k))   (mod p)
 - Đến được bước này, ta đã hoàn thành công việc tìm mối liên hệ giữa x và h, vì là phép mô-đun nên ta có thể chọn x tùy ý; ở đây chọn x = inverse(y, p)*pow(g, h-k) + p
 - Tuy nhiên ta cần phải thay đổi hiệu h-k để (x, h) khác nhau qua mỗi lần nhập, vì vậy gọi delta = h-k, ta có code:
 ```
-```
+```python
 from Crypto.Util.number import inverse
 
 #p = 
@@ -400,7 +400,7 @@ for i in range(20):
 ```b'KCSC{b4by_m4th_f0r_b4by_crypt0}'```
 
 > **Flag:**
-> KCSC{b4by_m4th_f0r_b4by_crypt0}
+> `KCSC{b4by_m4th_f0r_b4by_crypt0}`
 ---
 
 ## 6. Qu4dr4t1c (Medium)
@@ -409,7 +409,7 @@ for i in range(20):
 ### Mô tả:
 - Bài toán là một bài thuộc dạng RSA với n không thể factor
 - Challenge code:
-```
+```python
 from Crypto.Util.number import *
 e = 65537
 flag = b'KCSC{s0m3_r3ad4ble_5tr1ng_like_7his}'
@@ -431,7 +431,7 @@ while True:
     print(f"Cipher = {cipher}",file=f)
 ```
 - Challenge text:
-```
+```python
 N = 13524733362044232010736349595937464796777752381282044858904535549598695415259485540306280531287404403541039855661018351433654227342950710134306170544748441173774593898898768923907735212448495520658645896437678387670188401560165044043577269969416130117140222729708904953465161496726313677920240975640999580444678641072701612002184731572732086781180661428229265121878536891979130796853074814897843058889565035037987946761236280609366824566706376823708457581218333217098354233306312287549927586100725051273954453617494755601749327688591032955254157726764321151877093977335572150146339853526534429133266975640029987854181
 e = 65537
 Cipher = 3678620397255743852788853741107986108860981676309723331641730290544731009447106060307185476663548386172571801713658668783790148410569386488760778490944114348420614589196065297281576228195492339713201469195237426515519163981864121592862248581092535664172672153903696701157467812876812796524706730400133900257530235932000707810825149259236944828592989457788651053131965278448678769098840150302476398856999420129829083563611916558475165369663734941095660119099130765405955767410469621006246831917091632524062249541513097151767121519911807673852738866453379562168834013804186606786287157327927655505568604704262776577804
@@ -440,53 +440,51 @@ Cipher = 36786203972557438527888537411079861088609816763097233316417302905447310
 ### Lời giải:
 - Điều đầu tiên ta cần làm là giải quyết vấn đề N = reverse(n) (Đây là hàm đảo ngược các bit của n, ví dụ 8 = 1000 --> reverse(8) = 0001 = 1), từ đó thông qua xây dựng hàm ta tìm được:
 
-  ``````
-  n = 10535928993957098707495868629894329792474452627850484364879975170776044359523502316712812160652468895360539480661909481847699725994424302337527894003647493404319479822948801135582064759413675137973329275363323307322700057229292876616227464768042846058603605698411497986428096602564579426872208940723176671431481552210121834864189396919386160623517904031927997144164227315481061780852236992136682820486583286833470123275605460358511115809814429237942992178881673308811386879602517751325668987352562850689002557168152549671137879638365209684530796460734176686377930364792278724956593791041667923647224672406278328787563
-  ``````
+```python
+n = 10535928993957098707495868629894329792474452627850484364879975170776044359523502316712812160652468895360539480661909481847699725994424302337527894003647493404319479822948801135582064759413675137973329275363323307322700057229292876616227464768042846058603605698411497986428096602564579426872208940723176671431481552210121834864189396919386160623517904031927997144164227315481061780852236992136682820486583286833470123275605460358511115809814429237942992178881673308811386879602517751325668987352562850689002557168152549671137879638365209684530796460734176686377930364792278724956593791041667923647224672406278328787563
+```
 
 - Bước tiếp theo, nhận thấy n không thể factor nên vấn đề trở nên khó khăn hơn. Tuy nhiên, hint của bài là về phương trình bậc hai nên ta sẽ biến đổi để tìm p và q dựa vào dữ kiện q = inverse(e, p):
 
-  ``````
-  e*q = 1 (mod p) nên
-  e*q = k*p + 1 nên
-  e*q*p = k*p*p + p nên
-  k*(p**2) + p - e*n = 0
-  ``````
+```
+e*q = 1 (mod p) nên
+e*q = k*p + 1 nên
+e*q*p = k*p*p + p nên
+k*(p**2) + p - e*n = 0
+```
 
 - Brute force bằng code tìm ra k:
 
-  ``````
-  from gmpy2 import iroot
-  from Crypto.Util.number import *
-  
-  i = 1
-  while True:
-      delta = iroot(1+4*i*e*n, 2)[0]
-      p = (-1+delta)//(2*i)
-      if isPrime(p) and n%p == 0:
-          print(p)
-          break
-      else: i += 1 
-  ``````
+```python
+from gmpy2 import iroot
+from Crypto.Util.number import *
 
+i = 1
+while True:
+  delta = iroot(1+4*i*e*n, 2)[0]
+  p = (-1+delta)//(2*i)
+  if isPrime(p) and n%p == 0:
+      print(p)
+      break
+  else: i += 1 
+```
 - nhận được:
-
-  ``````
-  p = 106245478298766053336506937865696693518495671128140728235840143567858412848196219487107562730423460350636088499018940205376906326308245092147076762614122387487384071498893733389141981647735797413890130062601671192092533177585198005584601980589160823077821937079776813122221838761636244752593026992533381924761
-  ``````
+```python
+p = 106245478298766053336506937865696693518495671128140728235840143567858412848196219487107562730423460350636088499018940205376906326308245092147076762614122387487384071498893733389141981647735797413890130062601671192092533177585198005584601980589160823077821937079776813122221838761636244752593026992533381924761
+```
 
 - Từ đây bài trở nên dễ dàng khi ta có thể tìm ra q, f(n), d và từ đó nhận được flag qua code:
 
-  ``````
-  q = n//p
-  fn = (p-1)*(q-1)
-  d = inverse(e, fn)
-  pt = long_to_bytes(pow(ct, d, n))
-  print(pt)
-  ``````
+```python
+q = n//p
+fn = (p-1)*(q-1)
+d = inverse(e, fn)
+pt = long_to_bytes(pow(ct, d, n))
+print(pt)
+```
 
 > **Flag:**
-> KCSC{1f_D4m14n_g3t_m4rr13d_w1th_4ny4,th3_34st_4nd_th3_W3st_w1ll_b3_p34c3ful!!!!}
+> `KCSC{1f_D4m14n_g3t_m4rr13d_w1th_4ny4,th3_34st_4nd_th3_W3st_w1ll_b3_p34c3ful!!!!}`
 
 ---
 
@@ -498,7 +496,7 @@ Cipher = 36786203972557438527888537411079861088609816763097233316417302905447310
 - Bài mã hóa bằng thuật toán mã hóa Affine Cipher đã bị ẩn các biến a, b, n trong hàm mã hóa E(x) = (a*x +b) mod n
 - Challenge code:
 
-```
+```python
 from Crypto.Util.number import getPrime, inverse, GCD
 from random import randint
 
@@ -530,76 +528,76 @@ print(enc)
 
 - Thuật toán mã hóa của bài khá phức tạp khi hầu hết các thành phần đều là random, tuy nhiên ta có thể sử dụng biến đổi toán học để tìm ra format chuẩn cho hàm mã hóa của Affine:
 
-  ``````
-  c = (m + key[0])%n
-  c = (key[1]*c + key[2])%n
-  
-  nên:	c = (key[1]*(m + key[0]) + key[2])%n
-  hay	c = key[1]*m + key[0]*key[1] + key[2] (mod n)
-  với a = key[1]
-  và  b = key[0]*key[1] + key[2]
-  ``````
+```
+c = (m + key[0])%n
+c = (key[1]*c + key[2])%n
+
+nên:	c = (key[1]*(m + key[0]) + key[2])%n
+hay	c ≡ key[1]*m + key[0]*key[1] + key[2] (mod n)
+với a = key[1]
+và  b = key[0]*key[1] + key[2]
+```
 
 - Dựa vào known text ta biết được các kí tự sau:
 
-  ``````
-  K from 75 to 1910234182 (c1)
-  C from 67 to 2771761218 (c2)
-  S from 83 to 1048707146 (c3)
-  { from 123 to 871449803 (c4)
-  ``````
+```python
+K from 75 to 1910234182 (c1)
+C from 67 to 2771761218 (c2)
+S from 83 to 1048707146 (c3)
+{ from 123 to 871449803 (c4)
+```
 
 - qua đó rút được 4 phương trình:
 
-  ``````
-  c1 ≡ 75*a + b (mod n)
-  c2 ≡ 67*a + b (mod n)
-  c3 ≡ 83*a + b (mod n)
-  c4 ≡ 123*a + b (mod n)
-  ``````
+```
+c1 ≡ 75*a + b (mod n)
+c2 ≡ 67*a + b (mod n)
+c3 ≡ 83*a + b (mod n)
+c4 ≡ 123*a + b (mod n)
+```
 
 - suy ra hai phương trình con:
 
-  ``````
-  c2-c1 ≡ -8*a (mod n)
-  c4-c3 ≡ 40*a (mod n) ≡ (-5)*(-8*a) (mod n)
-  ``````
+```
+c2-c1 ≡ -8*a (mod n)
+c4-c3 ≡ 40*a (mod n) ≡ (-5)*(-8*a) (mod n)
+```
 
 - hay:
 
-  ``````
-  c4-c3 ≡ (-5)*(c2-c1) (mod n) hay
-  c4-c3+5*(c2-c1) ≡ 0 (mod n)
-  ``````
+```
+c4-c3 ≡ (-5)*(c2-c1) (mod n) hay
+c4-c3+5*(c2-c1) ≡ 0 (mod n)
+```
 
 - Từ đó tìm được ```n = c4-c3+5*(c2-c1)```, chọn n là số nguyên tố phù hợp, ta dễ dàng tìm được a và b sử dụng sagemath. Cuối cùng, ta đã có được a, b, n; sử dụng hàm giải mã D(E(x)) = (inverse(a, n)*(E(x) - b)) mod n ta nhận được flag.
 
 - CODE:
 
-  ``````
-  from Crypto.Util.number import *
-  
-  ct = [1910234182, 2771761218, 1048707146, 2771761218, 871449803, 617943628, 2163740357, 1302213321, 2302873284, 3886794429, 1086831562, 2752699010, 1517595080, 3886794429, 1498532872, 3240649152, 2321935492, 3690474878, 3886794429, 2379122116, 364437453, 3886794429, 3006205185, 852387595, 3905856637, 364437453, 364437453, 3886794429, 4064051772, 2809885634, 2379122116, 3240649152, 149055694, 3886794429, 2125615941, 206242318, 3886794429, 3671412670, 3886794429, 1283151113, 2321935492, 1086831562, 3886794429, 168117902, 2752699010, 1302213321, 3886794429, 2771761218, 2752699010, 1517595080, 579819212, 598881420, 3886794429, 1086831562, 2752699010, 1517595080, 3886794429, 1283151113, 2752699010, 3886794429, 579819212, 852387595, 2321935492, 3690474878, 2302873284, 2302873284, 3202524736, 3202524736, 2302873284, 656068044]
-  pt = ''
-  
-  c1 = 1910234182
-  c2 = 2771761218
-  c3 = 1048707146
-  c4 = 871449803
-  c5 = 656068044
-  c6 = 3886794429
-  n = c4-c3+5*(c2-c1)
-  a, b = 1957498039, 3791483389
-  a_inv = inverse(a, n)
-  
-  f = lambda x : a_inv*(x - b) % n
-  
-  for i in ct: pt += chr(f(i))
-  print(pt)
-  ``````
+```python
+from Crypto.Util.number import *
+
+ct = [1910234182, 2771761218, 1048707146, 2771761218, 871449803, 617943628, 2163740357, 1302213321, 2302873284, 3886794429, 1086831562, 2752699010, 1517595080, 3886794429, 1498532872, 3240649152, 2321935492, 3690474878, 3886794429, 2379122116, 364437453, 3886794429, 3006205185, 852387595, 3905856637, 364437453, 364437453, 3886794429, 4064051772, 2809885634, 2379122116, 3240649152, 149055694, 3886794429, 2125615941, 206242318, 3886794429, 3671412670, 3886794429, 1283151113, 2321935492, 1086831562, 3886794429, 168117902, 2752699010, 1302213321, 3886794429, 2771761218, 2752699010, 1517595080, 579819212, 598881420, 3886794429, 1086831562, 2752699010, 1517595080, 3886794429, 1283151113, 2752699010, 3886794429, 579819212, 852387595, 2321935492, 3690474878, 2302873284, 2302873284, 3202524736, 3202524736, 2302873284, 656068044]
+pt = ''
+
+c1 = 1910234182
+c2 = 2771761218
+c3 = 1048707146
+c4 = 871449803
+c5 = 656068044
+c6 = 3886794429
+n = c4-c3+5*(c2-c1)
+a, b = 1957498039, 3791483389
+a_inv = inverse(a, n)
+
+f = lambda x : a_inv*(x - b) % n
+
+for i in ct: pt += chr(f(i))
+print(pt)
+```
 
 > **Flag:**
-> KCSC{Wow!_y0u_be4t_m3_Thr33_7ime5_In_a_d4y_H0w_C0u1D_y0u_d0_1h4t!!??!}
+> `KCSC{Wow!_y0u_be4t_m3_Thr33_7ime5_In_a_d4y_H0w_C0u1D_y0u_d0_1h4t!!??!}`
 
 ---
 
@@ -608,7 +606,7 @@ print(enc)
 
 ### Mô tả:
 - Challenge code:
-```
+```python
 from Crypto.Util.number import * 
 import hashlib
 
@@ -648,7 +646,7 @@ with open("./Chall_med_4/enc_msg.bin", "wb") as f:
 
 ### Lời giải:
 - Sử dụng code:
-```
+```python
 with open("enc_msg_fixed.bin", "rb") as f: print(f.read())
 ```
 ta nhận được flag đã encrypted:
@@ -658,7 +656,7 @@ b'\xec\xa4\xb9K\xe6\xb9&}M\rO9\xad\xfd\xfe\x16\xbcN\xb0\x9b\x88\xf2\xac\xa8\xf1\
 - Bài khó nhưng có thể Brute force từng **đôi kí tự** rồi check với dãy bytes trên, suy ra:
 
 > **Flag:**
-> KCSC{r54_!5_51Mp|3_r1gH+?}
+> `KCSC{r54_!5_51Mp3|_r1gH+?}`
 ---
 
 ## 9. Random (Medium)
@@ -667,7 +665,7 @@ b'\xec\xa4\xb9K\xe6\xb9&}M\rO9\xad\xfd\xfe\x16\xbcN\xb0\x9b\x88\xf2\xac\xa8\xf1\
 ### Mô tả:
 - Bài có flag đã được encrypted bằng AES mode CBC.
 - Challenge code:
-```
+```python
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -726,69 +724,71 @@ exit(0)
 ### Lời giải:
 - Với AES mode CBC, ta cần tìm được key, ciphertext, iv rồi sử dụng hàm giải mã đã có sẵn để in ra flag.
 - Với **iv**, seed sẽ được random dựa vào thời gian hiện tại. Vì là seed nên chúng ta chỉ cần sử dụng đúng hàm tương tự như source code là có thể nhận được **iv**:
-    ```
-    random.seed(int(time.time()/4))
-    iv = str(random.randint(10**(16-1), 10**16 - 1))
-    ```
+```python
+random.seed(int(time.time()/4))
+iv = str(random.randint(10**(16-1), 10**16 - 1))
+```
 - Với **ciphertext**, bản mã trên server là bản mã đã bị thay đổi format nên ta cần phải chuyển ngược lại thành dạng đúng của **ciphertext**:
-    ```
-    cipher_text = '...'
-    ct = b''.join(struct.pack('B', int(byte, 16)) for byte in cipher_text.split())
-    ```
+```python
+cipher_text = '...'
+ct = b''.join(struct.pack('B', int(byte, 16)) for byte in cipher_text.split())
+```
 - Cuối cùng, **key** là thành phần khó tìm nhất trong bài, đẩy độ khó lên thành medium. Với một số **num** bị ẩn đi hoàn toàn trong bài, code thực hiện ```random.seed(num)``` rồi tạo ra **key**:
-    ```
-    num = (num >> 1 << 1) | random.choice([0,1])
-    key = num.to_bytes(3, byteorder='little')
-    ```
+```python
+num = (num >> 1 << 1) | random.choice([0,1])
+key = num.to_bytes(3, byteorder='little')
+```
 - Nhận thấy **num** là số int được chuyển từ 3 bytes nên giới hạn của **num** sẽ là ```[1, 2**24]```, đến đây chúng ta cần brute force rồi tìm ra chuỗi có chứa ```'KCSC{'```, khi đó flag sẽ được revealed hoàn toàn. Nhưng **num** được ```|``` với hoặc 0 hoặc 1 nên ta cần brute force với hai trường hợp riêng.
 - Bên cạnh đó, hàm giải mã có thể được đơn giản hóa đi thành:
-    ```
-    def aes_decrypt(key, ciphertext, iv):
-        key = key.ljust(32)[:32]
-        iv = iv.encode()
-        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
-        decryptor = cipher.decryptor()
-        padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()
-        return padded_plaintext
-    ```
+```python
+def aes_decrypt(key, ciphertext, iv):
+    key = key.ljust(32)[:32]
+    iv = iv.encode()
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+    decryptor = cipher.decryptor()
+    padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()
+    return padded_plaintext
+```
 - Ta có code (với trường hợp choice = 0):
-    ```
-    from pwn import *
-    from cryptography.hazmat.backends import default_backend
-    from cryptography.hazmat.primitives import padding
-    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-    import struct
+```python
+from pwn import *
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+import struct
 
-    def aes_decrypt(key, ciphertext, iv):
-        key = key.ljust(32)[:32]
-        iv = iv.encode()
-        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
-        decryptor = cipher.decryptor()
-        padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()
-        return padded_plaintext
+def aes_decrypt(key, ciphertext, iv):
+    key = key.ljust(32)[:32]
+    iv = iv.encode()
+    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+    decryptor = cipher.decryptor()
+    padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()
+    return padded_plaintext
 
-    random.seed(int(time.time()/4))
-    iv = str(random.randint(10**(16-1), 10**16 - 1))
-    s = remote("103.162.14.116", 16001)
-    print(iv, s.recv())
+random.seed(int(time.time()/4))
+iv = str(random.randint(10**(16-1), 10**16 - 1))
+s = remote("103.162.14.116", 16001)
+print(iv, s.recv())
 
-    #iv = str(9032022690947522) 
-    #cipher_text = '96 af 0a c3 a9 80 4e 54 ae 37 99 07 8e 90 06 1d 8f a9 57 d3 f2 d5 d4 0a 4f 60 30 49 5b 4d 38 16'
-    ct = b''.join(struct.pack('B', int(byte, 16)) for byte in cipher_text.split())
-    for num in range(1, 2**24):
-        random.seed(num)
-        num = (num >> 1 << 1) | 0
-        key = num1.to_bytes(3, byteorder='little')
-        pt = aes_decrypt(key, ct, iv)
-        if("KCSC{" in str(pt)): 
-            print(pt)
-            break
-    ```
-    - Với trường hợp choice = 1, ta làm tương tự
-    - Nên thử trường hợp choice = 1 vì flag được giải bằng trường hợp này
+#iv = str(9032022690947522) 
+#cipher_text = '96 af 0a c3 a9 80 4e 54 ae 37 99 07 8e 90 06 1d 8f a9 57 d3 f2 d5 d4 0a 4f 60 30 49 5b 4d 38 16'
+ct = b''.join(struct.pack('B', int(byte, 16)) for byte in cipher_text.split())
+for num in range(1, 2**24):
+    random.seed(num)
+    num = (num >> 1 << 1) | 0
+    key = num1.to_bytes(3, byteorder='little')
+    pt = aes_decrypt(key, ct, iv)
+    if("KCSC{" in str(pt)): 
+        print(pt)
+        break
+```
+
+- Với trường hợp choice = 1, ta làm tương tự
+- Nên thử trường hợp choice = 1 vì flag được giải bằng trường hợp này
+
 
 > **Flag:**
-> KCSC{Brut3_F0rc3_3asy_Pe4sy!}
+> `KCSC{Brut3_F0rc3_3asy_Pe4sy!}`
 
 **NOTE:** 
 - Bài dễ gây nản nên thay vì sử dụng ```range(1, 2**24)``` thì ta nên chia thành các khoảng nhỏ hơn. 
