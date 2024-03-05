@@ -21,7 +21,7 @@ SOLUTION:
 - Compute p1 and p2:
     p1 = pow(c1, u, n) if u>0 else pow(pow(c1, -1, n), -u, n)
     (pow(c1, -1, n) is the inversion of c1: c1_inv)
-    p2 = pow(c2, u, n) if v>0 else pow(pow(c2, -1, n), -v, n)
+    p2 = pow(c2, v, n) if v>0 else pow(pow(c2, -1, n), -v, n)
     (pow(c2, -1, n) is the inversion of c2: c2_inv)
 
     then m = (p1*p2)%n
